@@ -43,9 +43,25 @@ CONFIG_SYSTEM_REVOCATION_KEYS=""
 # end of Certificates for signature checking
 ```
 
-Step 6: Some Installation of required packages
+### Step 6: Some Installation of required packages
 ```bash
 sudo apt-get install libelf-dev
 sudo apt install dwarves
 ```
 
+### Step 7: Build the kernel
+```bash
+make -j4
+```
+
+### Step 8: Install the kernel
+```bash
+sudo make modules_install
+sudo make install
+```
+
+### Step 9: To change the default kernel to the newly built kernel need to change the /etc/default/grub file. For me I have to change the GRUB_DEFAULT=0 to GRUB_DEFAULT="1>2"
+```bash
+sudo update-grub
+sudo reboot
+```
