@@ -1,0 +1,79 @@
+# Ignore build and configuration files
+/build/
+/vmlinux
+/Module.symvers
+/Makefile
+/.config
+/.config.old
+/System.map
+/.tmp_versions/
+/.vscode/
+/*.o
+/*.ko
+/*.mod.c
+/*.cmd
+/*.order
+/*.symvers
+
+# Ignore kernel source directory
+/linux-*
+
+# Ignore cscope and tags files
+/cscope.*
+/tags
+
+# Ignore logs and temp files
+*.log
+*.tmp
+*.swp
+*.bak
+*.pid
+*.err
+
+# Ignore object files and shared libraries
+*.o
+*.ko
+*.so
+*.mod
+
+# Ignore core dumps
+core
+
+# Ignore package managers and system-specific files
+*.tar.gz
+*.deb
+*.rpm
+*.snap
+*.flatpak
+.DS_Store
+Thumbs.db
+.nv/
+
+# Ignore IDE and editor files
+*.vscode
+*.idea
+*.sublime-project
+*.sublime-workspace
+
+# Ignore Python cache and bytecode files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignore files related to virtualization (e.g., VM snapshots)
+*.vdi
+*.vmdk
+*.vbox
+*.qcow2
+*.img
+*.iso
+
+# Ignore ZIP files
+*.zip
+
+# Ignore system files
+Thumbs.db
+.DS_Store
+
+
