@@ -1,1 +1,0 @@
-cmd_/home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.ko /home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.o /home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.mod.o;  true
