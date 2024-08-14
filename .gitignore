@@ -76,4 +76,14 @@ __pycache__/
 Thumbs.db
 .DS_Store
 
-
+# For LKM
+*.mod.c
+*.mod.o
+*.mod
+*.o
+*.cmd
+*.ko
+*.symvers
+*.order
+*.tmp_versions
+*.tmp
