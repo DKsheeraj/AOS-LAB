@@ -4,7 +4,7 @@
  * Members:
  * > 21CS30037 - Datta Ksheeraj
  * > 21CS10016 - Bratin Mondal
-*/
+ */
 
 // Header files
 #include <linux/errno.h>
@@ -22,52 +22,75 @@ MODULE_DESCRIPTION("LKM for a Set with Max Capacity");
 MODULE_VERSION("1.0");
 
 #define PROCFS_NAME "partb_21CS10016_21CS30037" // Name of the proc file
-#define PROCFS_MAX_SIZE 1024 // Max size of the proc file
+#define PROCFS_MAX_SIZE 1024                    // Max size of the proc file
 
 DEFINE_MUTEX(procfs_mutex); // Mutex for synchronization
 
 /**
  * Enum to represent the state of a process
- * 
+ *
  * PROC_FILE_OPEN: File is open but set is not initialized
  * PROC_READ: File is open and set is initialized, ready for reads and writes
  */
-enum process_state {
-    PROC_FILE_OPEN,  
-    PROC_READ     
+enum process_state
+{
+    PROC_FILE_OPEN,
+    PROC_READ
 };
 
 /**
- * 
+ * Struct to represent a set
+ *
+ * elements: Array of elements in the set
+ * capacity: Maximum capacity of the set
+ * size: Number of elements in the set
  */
-struct set {
+struct set
+{
     int *elements;
     int capacity;
     int size;
 };
 
-struct process_node {
+/**
+ * Struct to represent a process node
+ *
+ * pid: Process ID
+ * process_set: Set associated with the process
+ * process_state: State of the process
+ * next: Pointer to the next process node (Linked list)
+ */
+struct process_node
+{
     pid_t pid;
     struct set *process_set;
     enum process_state state;
     struct process_node *next;
 };
 
-static struct proc_dir_entry *proc_file;
-static char procfs_buffer[PROCFS_MAX_SIZE];
-static size_t procfs_buffer_size = 0;
-static struct process_node *process_list = NULL;
+static struct proc_dir_entry *proc_file;         // Pointer to the proc file
+static char procfs_buffer[PROCFS_MAX_SIZE];      // Buffer to store data read from the proc file
+static size_t procfs_buffer_size = 0;            // Size of the data read from the proc file
+static struct process_node *process_list = NULL; // Pointer to the head of the process list
 
-// Initialize a set
-static struct set *set_init(int capacity) {
+/**
+ * set_init: Initialize a set
+ *
+ * @param capacity: Maximum capacity of the set
+ * @return Pointer to the set
+ */
+static struct set *set_init(int capacity)
+{
     struct set *s = kmalloc(sizeof(struct set), GFP_KERNEL);
-    if (!s) {
+    if (!s)
+    {
         printk(KERN_ALERT "E: Memory allocation for set failed\n");
         return NULL;
     }
 
     s->elements = kmalloc(capacity * sizeof(int), GFP_KERNEL);
-    if (!s->elements) {
+    if (!s->elements)
+    {
         printk(KERN_ALERT "E: Memory allocation for set elements failed\n");
         kfree(s);
         return NULL;
@@ -80,17 +103,26 @@ static struct set *set_init(int capacity) {
 }
 
 // Deallocate memory for a set
-static void set_delete(struct set *s) {
-    if (s) {
-        kfree(s->elements);
+static void set_delete(struct set *s)
+{
+    if (s)
+    {
+        if (s->elements)
+        {
+            kfree(s->elements);
+        }
         kfree(s);
     }
 }
 
 // Check if an element exists in the set
-static int set_contains(struct set *s, int val) {
-    for (int i = 0; i < s->size; i++) {
-        if (s->elements[i] == val) {
+static int set_contains(struct set *s, int val)
+{
+    int i;
+    for (i = 0; i < s->size; i++)
+    {
+        if (s->elements[i] == val)
+        {
             return 1;
         }
     }
@@ -98,34 +130,50 @@ static int set_contains(struct set *s, int val) {
 }
 
 // Insert an element into the set
-static int set_insert(struct set *s, int val) {
-    if (s->size >= s->capacity) {
+static int set_insert(struct set *s, int val)
+{
+    if (s->size >= s->capacity)
+    {
         printk(KERN_ALERT "E: Set is full\n");
         return -EACCES;
     }
-    if (set_contains(s, val)) {
+    if (set_contains(s, val))
+    {
         printk(KERN_ALERT "E: Element already exists in the set\n");
         return -EEXIST;
     }
 
-    s->elements[s->size++] = val;
+    // Insert in sorted order
+    int i = s->size - 1;
+    while (i >= 0 && s->elements[i] > val)
+    {
+        s->elements[i + 1] = s->elements[i];
+        i--;
+    }
+    s->elements[i + 1] = val;
+    s->size++;
     return 0;
 }
 
 // Read elements from the set
-static ssize_t set_read(struct set *s, char __user *buffer, size_t length) {
+static ssize_t set_read(struct set *s, char __user *buffer, size_t length)
+{
     size_t bytes_to_copy = min(length, (size_t)(s->size * sizeof(int)));
-    if (copy_to_user(buffer, s->elements, bytes_to_copy)) {
+    if (copy_to_user(buffer, s->elements, bytes_to_copy))
+    {
         return -EACCES;
     }
     return bytes_to_copy;
 }
 
 // Find a process node by PID
-static struct process_node *process_find(pid_t pid) {
+static struct process_node *process_find(pid_t pid)
+{
     struct process_node *curr = process_list;
-    while (curr) {
-        if (curr->pid == pid) {
+    while (curr)
+    {
+        if (curr->pid == pid)
+        {
             return curr;
         }
         curr = curr->next;
@@ -134,9 +182,11 @@ static struct process_node *process_find(pid_t pid) {
 }
 
 // Insert a process node
-static struct process_node *process_insert(pid_t pid) {
+static struct process_node *process_insert(pid_t pid)
+{
     struct process_node *node = kmalloc(sizeof(struct process_node), GFP_KERNEL);
-    if (!node) {
+    if (!node)
+    {
         return NULL;
     }
 
@@ -150,26 +200,32 @@ static struct process_node *process_insert(pid_t pid) {
 }
 
 // Delete a process node
-static int process_delete(pid_t pid) {
+static int process_delete(pid_t pid)
+{
     struct process_node *curr = process_list;
     struct process_node *previous = NULL;
 
-    while (curr) {
-        if (curr->pid == pid) {
-            if (previous) {
+    while (curr)
+    {
+        if (curr->pid == pid)
+        {
+            if (previous)
+            {
                 previous->next = curr->next;
-            } else {
+            }
+            else
+            {
                 process_list = curr->next;
             }
 
-            if (curr->process_set) {
+            if (curr->process_set)
+            {
                 set_delete(curr->process_set);
             }
 
             kfree(curr);
             return 0;
         }
-
         previous = curr;
         curr = curr->next;
     }
@@ -177,32 +233,40 @@ static int process_delete(pid_t pid) {
 }
 
 // Handle write operations
-static ssize_t handle_write(struct process_node *node) {
+static ssize_t handle_write(struct process_node *node)
+{
     size_t capacity;
     int value, ret_val;
 
-    if (node->state == PROC_FILE_OPEN) {
-        if (procfs_buffer_size != 1) {
+    if (node->state == PROC_FILE_OPEN)
+    {
+        if (procfs_buffer_size != 1)
+        {
             printk(KERN_ALERT "E: Capacity buffer size must be 1 byte\n");
             return -EINVAL;
         }
 
         capacity = (size_t)procfs_buffer[0];
-        if (capacity < 1 || capacity > 100) {
+        if (capacity < 1 || capacity > 100)
+        {
             printk(KERN_ALERT "E: Capacity must be between 1 and 100\n");
             return -EINVAL;
         }
 
         node->process_set = set_init(capacity);
-        if (!node->process_set) {
+        if (!node->process_set)
+        {
             printk(KERN_ALERT "E: Could not initialize set for process %d\n", node->pid);
             return -ENOMEM;
         }
 
         node->state = PROC_READ;
-        printk(KERN_INFO "I: Set initialized for process %d\n", node->pid);
-    } else if (node->state == PROC_READ) {
-        if (procfs_buffer_size != sizeof(int)) {
+        printk(KERN_INFO "I: Set initialized for process %d with capacity %lu\n", node->pid, capacity);
+    }
+    else if (node->state == PROC_READ)
+    {
+        if (procfs_buffer_size != sizeof(int))
+        {
             printk(KERN_ALERT "E: Value buffer size must be 4 bytes\n");
             return -EINVAL;
         }
@@ -210,7 +274,8 @@ static ssize_t handle_write(struct process_node *node) {
         value = *((int *)procfs_buffer);
 
         ret_val = set_insert(node->process_set, value);
-        if (ret_val < 0) {
+        if (ret_val < 0)
+        {
             printk(KERN_ALERT "E: Could not insert value %d in set for process %d\n", value, node->pid);
             return -EACCES;
         }
@@ -223,11 +288,13 @@ static ssize_t handle_write(struct process_node *node) {
 
 static void process_list_delete(void)
 {
-    struct process_node *node = process_list;
+    struct process_node *curr = process_list;
     struct process_node *next = NULL;
-    while(curr){
+    while (curr)
+    {
         next = curr->next;
-        if (curr->process_set) {
+        if (curr->process_set)
+        {
             set_delete(curr->process_set);
         }
         kfree(curr);
@@ -236,7 +303,8 @@ static void process_list_delete(void)
     process_list = NULL;
 }
 
-static ssize_t procfile_write(struct file *filep, const char __user *buffer, size_t length, loff_t *offset) {
+static ssize_t procfile_write(struct file *filep, const char __user *buffer, size_t length, loff_t *offset)
+{
     pid_t pid;
     int ret_val;
     struct process_node *node;
@@ -248,20 +316,29 @@ static ssize_t procfile_write(struct file *filep, const char __user *buffer, siz
     ret_val = 0;
 
     node = process_find(pid);
-    if (!node) {
+    if (!node)
+    {
         printk(KERN_ALERT "E: Process %d does not have the process file open\n", pid);
         ret_val = -EACCES;
-    } else {
-        if (buffer == NULL || length == 0) {
+    }
+    else
+    {
+        if (buffer == NULL || length == 0)
+        {
             printk(KERN_ALERT "E: No data to write\n");
             ret_val = -EINVAL;
-        } else {
+        }
+        else
+        {
             procfs_buffer_size = min(length, (size_t)PROCFS_MAX_SIZE);
 
-            if (copy_from_user(procfs_buffer, buffer, procfs_buffer_size)) {
+            if (copy_from_user(procfs_buffer, buffer, procfs_buffer_size))
+            {
                 printk(KERN_ALERT "E: Could not copy data from user\n");
                 ret_val = -EFAULT;
-            } else {
+            }
+            else
+            {
                 ret_val = handle_write(node);
             }
         }
@@ -272,7 +349,8 @@ static ssize_t procfile_write(struct file *filep, const char __user *buffer, siz
     return ret_val;
 }
 
-static ssize_t procfile_read(struct file *filep, char __user *buffer, size_t length, loff_t *offset) {
+static ssize_t procfile_read(struct file *filep, char __user *buffer, size_t length, loff_t *offset)
+{
     pid_t pid;
     ssize_t ret_val;
 
@@ -283,19 +361,28 @@ static ssize_t procfile_read(struct file *filep, char __user *buffer, size_t len
     ret_val = 0;
 
     struct process_node *node = process_find(pid);
-    if (!node) {
+    if (!node)
+    {
         printk(KERN_ALERT "E: Process %d does not have the process file open\n", pid);
         ret_val = -EACCES;
-    } else {
-        if (node->state == PROC_FILE_OPEN) {
+    }
+    else
+    {
+        if (node->state == PROC_FILE_OPEN)
+        {
             printk(KERN_ALERT "E: Set not initialized yet\n");
             ret_val = -EACCES;
-        } else if (!node->process_set) {
+        }
+        else if (!node->process_set)
+        {
             printk(KERN_ALERT "E: Set not initialized\n");
             ret_val = -EACCES;
-        } else {
+        }
+        else
+        {
             ret_val = set_read(node->process_set, buffer, length);
-            if (ret_val < 0) {
+            if (ret_val < 0)
+            {
                 printk(KERN_ALERT "E: Could not read data from set\n");
             }
         }
@@ -306,7 +393,8 @@ static ssize_t procfile_read(struct file *filep, char __user *buffer, size_t len
     return ret_val;
 }
 
-static int procfile_open(struct inode *inode, struct file *file) {
+static int procfile_open(struct inode *inode, struct file *file)
+{
     pid_t pid;
     int ret_val;
     struct process_node *node;
@@ -318,15 +406,21 @@ static int procfile_open(struct inode *inode, struct file *file) {
     ret_val = 0;
 
     node = process_find(pid);
-    if (node) {
+    if (node)
+    {
         printk(KERN_ALERT "E: Process %d already has the process file open\n", pid);
         ret_val = -EACCES;
-    } else {
+    }
+    else
+    {
         node = process_insert(pid);
-        if (!node) {
+        if (!node)
+        {
             printk(KERN_ALERT "E: Could not allocate memory for process %d\n", pid);
             ret_val = -ENOMEM;
-        }else{
+        }
+        else
+        {
             printk(KERN_INFO "I: Process %d has the process file open\n", pid);
         }
     }
@@ -336,7 +430,8 @@ static int procfile_open(struct inode *inode, struct file *file) {
     return ret_val;
 }
 
-static int procfile_release(struct inode *inode, struct file *file) {
+static int procfile_release(struct inode *inode, struct file *file)
+{
     pid_t pid;
     int ret_val;
 
@@ -347,15 +442,16 @@ static int procfile_release(struct inode *inode, struct file *file) {
     ret_val = 0;
 
     struct process_node *node = process_find(pid);
-    if (!node) {
+    if (!node)
+    {
         printk(KERN_ALERT "E: Process %d does not have the process file open\n", pid);
         ret_val = -EACCES;
-    } else {
+    }
+    else
+    {
         ret_val = process_delete(pid);
         printk(KERN_INFO "I: Process %d has the process file closed\n", pid);
     }
-
-    
 
     mutex_unlock(&procfs_mutex);
 
@@ -369,11 +465,13 @@ static const struct proc_ops proc_fops = {
     .proc_release = procfile_release,
 };
 
-static int __init lkm_init(void) {
+static int __init lkm_init(void)
+{
     printk(KERN_INFO "I: LKM for partb_21CS10016_21CS30037 loaded\n");
 
     proc_file = proc_create(PROCFS_NAME, 0666, NULL, &proc_fops);
-    if (!proc_file) {
+    if (!proc_file)
+    {
         printk(KERN_ALERT "E: Could not create process file\n");
         return -ENOENT;
     }
@@ -382,13 +480,16 @@ static int __init lkm_init(void) {
     return 0;
 }
 
-static void __exit lkm_exit(void) {
+static void __exit lkm_exit(void)
+{
     struct process_node *node = process_list;
-    while (node) {
+    while (node)
+    {
         struct process_node *temp = node;
         node = node->next;
 
-        if (temp->process_set) {
+        if (temp->process_set)
+        {
             set_delete(temp->process_set);
         }
         kfree(temp);
