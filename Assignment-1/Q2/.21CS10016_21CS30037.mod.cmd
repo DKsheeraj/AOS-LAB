@@ -1,0 +1,1 @@
+cmd_/home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.mod := { echo  /home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.o;  echo; } > /home/bratin/AOS-LAB/Assignment-1/Q2/21CS10016_21CS30037.mod

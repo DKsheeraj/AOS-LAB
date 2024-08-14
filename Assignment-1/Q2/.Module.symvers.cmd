@@ -1,0 +1,1 @@
+cmd_/home/bratin/AOS-LAB/Assignment-1/Q2/Module.symvers := sed 's/ko$$/o/' /home/bratin/AOS-LAB/Assignment-1/Q2/modules.order | scripts/mod/modpost -m -a   -o /home/bratin/AOS-LAB/Assignment-1/Q2/Module.symvers -e -i Module.symvers   -T -

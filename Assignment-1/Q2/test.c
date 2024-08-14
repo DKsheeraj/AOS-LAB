@@ -33,23 +33,66 @@ void test_set(int *values, int length) {
         printf("Inserted value %d into the set\n", values[i]);
     }
 
-    // Read values back from the set
-    int out;
-    for (int i = 0; i < length; i++) {
-        if (read(fd, &out, sizeof(int)) != sizeof(int)) {
-            perror("Error reading value from set");
-            close(fd);
-            exit(EXIT_FAILURE);
-        }
-        printf("Read value %d from the set\n", out);
+    // Read will return all the values in the set
+    int read_values[length];
+    if (read(fd, read_values, sizeof(read_values)) != sizeof(read_values)) {
+        perror("Error reading values from set");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+    for(int i = 0; i < length; i++) {
+        printf("Read value %d from the set\n", read_values[i]);
     }
 
     close(fd);
 }
 
 int main() {
-    int values[] = {10, 20, 30, 40, 50};
-    int length = sizeof(values) / sizeof(values[0]);
+    // seed the random number generator
+    srand(getpid());
+    int *values;
+
+    int length = rand() % 10 + 5;
+
+    values = (int *)malloc(length * sizeof(int));
+    if (values == NULL) {
+        perror("Error allocating memory");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < length; i++) {
+        // generate a new random value
+        values[i] = rand() % 100;
+        while(1)
+        {
+            int flag = 0;
+            for(int j = 0; j < i; j++)
+            {
+                if(values[j] == values[i])
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if(flag == 1)
+            {
+                values[i] = rand() % 100;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    // int values[] = {1, 2, 3, 4, 5};
+    // int length = 5;
+
+    // print the values
+    printf("Values: ");
+    for (int i = 0; i < length; i++) {
+        printf("%d ", values[i]);
+    }
 
     printf("Starting test for LKM set module...\n");
     test_set(values, length);
