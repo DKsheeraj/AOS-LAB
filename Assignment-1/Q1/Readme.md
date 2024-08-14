@@ -13,7 +13,7 @@ Specifically turn off the IPV6 support in the kernel configuration by navigating
 ```bash
 Networking support  --->
     Networking options  --->
-        <*> The IPv6 protocol
+        <> The IPv6 protocol
 ```
 
 <!-- Make Kernel based Virtual Machine(KVM) an inbuilt feature instead of a kernel module. -->

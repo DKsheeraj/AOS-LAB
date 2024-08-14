@@ -3,9 +3,10 @@
  * Assignment 1, Part B: Loadable Kernel Module(LKM) for a Set
  * Members:
  * > 21CS30037 - Datta Ksheeraj
- * > 21CS100 - Bratin Mondal
+ * > 21CS10016 - Bratin Mondal
 */
 
+// Header files
 #include <linux/errno.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
@@ -20,16 +21,25 @@ MODULE_AUTHOR("Ksheeraj and Bratin");
 MODULE_DESCRIPTION("LKM for a Set with Max Capacity");
 MODULE_VERSION("1.0");
 
-#define PROCFS_NAME "partb_21CS10016_21CS30037"
-#define PROCFS_MAX_SIZE 1024
+#define PROCFS_NAME "partb_21CS10016_21CS30037" // Name of the proc file
+#define PROCFS_MAX_SIZE 1024 // Max size of the proc file
 
-DEFINE_MUTEX(procfs_mutex);
+DEFINE_MUTEX(procfs_mutex); // Mutex for synchronization
 
+/**
+ * Enum to represent the state of a process
+ * 
+ * PROC_FILE_OPEN: File is open but set is not initialized
+ * PROC_READ: File is open and set is initialized, ready for reads and writes
+ */
 enum process_state {
-    PROC_FILE_OPEN,  // File is open but set is not initialized
-    PROC_READ        // File is open and set is initialized, ready for reads and writes
+    PROC_FILE_OPEN,  
+    PROC_READ     
 };
 
+/**
+ * 
+ */
 struct set {
     int *elements;
     int capacity;

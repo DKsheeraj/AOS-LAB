@@ -1,0 +1,1 @@
+cmd_/home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.ko /home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.o /home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.mod.o;  true

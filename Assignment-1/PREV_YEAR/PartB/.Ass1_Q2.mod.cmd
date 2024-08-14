@@ -1,0 +1,1 @@
+cmd_/home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.mod := { echo  /home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.o;  echo; } > /home/bratin/AOS-LAB/Assignment-1/PREV_YEAR/PartB/Ass1_Q2.mod
