@@ -28,7 +28,7 @@ MODULE_VERSION("1.0");
 #define PROCFS_NAME "partb_21CS10016_21CS30037" /** < Name of the proc file >*/
 #define PROCFS_MAX_SIZE 1024                    /** < Maximum size of the buffer >*/
 
-DEFINE_MUTEX(procfs_mutex); /** < Mutex for the proc file >*/
+static DEFINE_MUTEX(procfs_mutex); /** < Mutex for the proc file >*/
 
 /**
  * Enum to represent the state of a process
