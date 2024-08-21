@@ -28,6 +28,8 @@ MODULE_VERSION("1.0");
 #define FILE_NAME "partb_21CS10016_21CS30037" /** < Name of the proc file >*/
 #define MAX_SIZE 1024                    /** < Maximum size of the buffer >*/
 
+#define current get_current()
+
 static DEFINE_MUTEX(procFileMutex); /** < Mutex for the proc file >*/
 
 /**

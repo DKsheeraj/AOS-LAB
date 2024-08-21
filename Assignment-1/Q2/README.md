@@ -24,8 +24,8 @@ When building the kernel module, the following steps occur:
   + This involves invoking the kernel build system to process the source files and generate the module. 
 
 + **Object File Creation**:  
-  + During the build process, object files are created for each source file.   
-  + These object files are linked together to produce the final kernel module.
+  + During the build process, object files are created for
+   the kernel module source code (21CS10016_21CS30037.c). 
 
 + **Module Binary:**  
   + The output of the build process is a kernel module binary file (partb_21CS10016_21CS30037.ko) that can be loaded into the kernel.  
@@ -97,14 +97,15 @@ When unloading the module using rmmod (make uninstall), the following events occ
     + On successful insertion, the LKM returns the number of bytes written (4 bytes).  
 + **Reading Integers from the Set** 
   + System Call: read()  
-  + Data: 4 bytes (32-bit integer)  
+  + Data: 4 * N bytes (N 32-bit integers), where N is the number of elements in the set.
   + Behavior:  
-    + The user-space process reads a 32-bit integer from the proc file.    
+    + The user-space process reads an array of 32-bit integers from the proc file.
     + Read Rules:  
-      + Element Retrieval: The integer read is one of the elements from the set, typically following the internal ordering of the set.  
+      + Element Retrieval: The integers are retrieved in ascending order.
       + Error Handling:  
         + In case of error LKM produces an EACCES error and returns -EACCES.  
-    + On successful read, the LKM returns the number of bytes read (4 bytes).  
+    + On successful read, the LKM returns the number of bytes read (4 * N bytes).
+    + In case the buffer is too small to hold all elements, the LKM copies as many elements as possible but returns the size of the buffer required to hold all elements, so that the user-space process can allocate a larger buffer and try again.  
 + **Closing the Proc File**  
   + System Call: close() 
   + Behavior:  
