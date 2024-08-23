@@ -26,7 +26,7 @@ MODULE_DESCRIPTION("LKM for a Set with Max Capacity");
 MODULE_VERSION("1.0");
 
 #define FILE_NAME "partb_21CS10016_21CS30037" /** < Name of the proc file >*/
-#define MAX_SIZE 1024                         /** < Maximum size of the buffer >*/
+#define MAX_SIZE 1024                    /** < Maximum size of the buffer >*/
 
 static DEFINE_MUTEX(procFileMutex); /** < Mutex for the proc file >*/
 
@@ -73,7 +73,7 @@ struct processNode
 };
 
 static struct proc_dir_entry *proc_file;      /**< Pointer to the proc file >*/
-static char procfs_buffer[MAX_SIZE];          /**< Buffer to store data >*/
+static char procfs_buffer[MAX_SIZE];   /**< Buffer to store data >*/
 static size_t procfs_buffer_size = 0;         /**< Size of the buffer >*/
 static struct rb_root process_root = RB_ROOT; /**< Root of the process nodes >*/
 
@@ -114,7 +114,7 @@ static struct set *set_init(int capacity)
  */
 static void set_delete(struct set *s)
 {
-    if (s) // If the set exists
+    if (s)
     {
         if (s->elements)
         {
@@ -162,7 +162,7 @@ static int set_insert(struct set *s, int val)
 
     if (set_contains(s, val)) // Check if the element already exists in the set
     {
-        return 0; // Return 0 if the element is already present (No need to insert)
+        return 0;
     }
 
     // Insert the element in sorted order
@@ -187,12 +187,12 @@ static int set_insert(struct set *s, int val)
  */
 static ssize_t set_read(struct set *s, char __user *buffer, size_t length)
 {
-    size_t bytes_to_copy = min(length, (size_t)(s->size * sizeof(int))); // Get the number of bytes to copy, minimum of buffer length and set size in bytes
+    size_t bytes_to_copy = min(length, (size_t)(s->size * sizeof(int)));
     if (copy_to_user(buffer, s->elements, bytes_to_copy))
     {
         return -EACCES;
     }
-    return s->size * sizeof(int); // Return the size of the set in bytes even if the buffer is not sufficient to copy all elements. So that the user can know the size of the set and allocate a buffer accordingly.
+    return s->size * sizeof(int);
 }
 
 /**
@@ -234,7 +234,7 @@ static struct processNode *process_find(pid_t pid)
 static struct processNode *processInsert(pid_t pid)
 {
     struct processNode *node = kmalloc(sizeof(struct processNode), GFP_KERNEL); // Allocate memory for the process node
-    struct rb_node **new, *parent;                                              // New node and parent node
+    struct rb_node **new, *parent;                                                // New node and parent node
 
     if (!node)
     {
@@ -242,9 +242,9 @@ static struct processNode *processInsert(pid_t pid)
         return NULL;
     }
 
-    node->pid = pid;         // Set the process ID
-    node->processSet = NULL; // Set the set to NULL
-    node->state = FILE_OPEN; // Set the state to FILE_OPEN
+    node->pid = pid;              // Set the process ID
+    node->processSet = NULL;     // Set the set to NULL
+    node->state = FILE_OPEN;     // Set the state to FILE_OPEN
 
     // Insert the process node in the red-black tree
     new = &(process_root.rb_node); // Start from the root node
@@ -252,8 +252,8 @@ static struct processNode *processInsert(pid_t pid)
     while (*new)                   // Traverse the tree
     {
         struct processNode *this = container_of(*new, struct processNode, node); // Get the process node
-        parent = *new;                                                           // Set the parent node
-        if (pid < this->pid)                                                     // Move to the left child
+        parent = *new;                                                             // Set the parent node
+        if (pid < this->pid)                                                       // Move to the left child
         {
             new = &((*new)->rb_left);
         }
@@ -427,9 +427,11 @@ static ssize_t process_file_read(struct file *filep, char __user *buffer, size_t
     ssize_t ret_val;
     struct processNode *node;
 
+
     pid = current->pid;
-    printk(KERN_INFO "I: Reading from the file | PID: %d\n", pid);
+    printk(KERN_INFO "I: Reading from the file | PID: %d\n", pid);    
     mutex_lock(&procFileMutex); // Lock the mutex
+
 
     ret_val = 0;
 
@@ -479,6 +481,7 @@ static int process_file_open(struct inode *inode, struct file *file)
     int ret_val;
     struct processNode *node;
 
+
     pid = current->pid;
     printk(KERN_INFO "I: Opening the file | PID: %d\n", pid);
     mutex_lock(&procFileMutex); // Lock the mutex
@@ -519,12 +522,13 @@ static int process_file_open(struct inode *inode, struct file *file)
  */
 static int process_file_release(struct inode *inode, struct file *file)
 {
-    pid_t pid = current->pid;
+    pid_t pid=current->pid;
     int ret_val;
     struct processNode *node;
 
     printk(KERN_INFO "I: Closing the file | PID: %d\n", pid);
     mutex_lock(&procFileMutex); // Lock the mutex
+ 
 
     ret_val = 0;
 
@@ -576,47 +580,47 @@ static int __init LKM_Init(void)
         printk(KERN_ALERT "E: Could not create process file\n");
         return -ENOENT;
     }
-    mutex_init(&procFileMutex);                           // Initialize the mutex
-    printk(KERN_INFO "I: /proc/%s created\n", FILE_NAME); // printk to the kernel log file
+    mutex_init(&procFileMutex); // Initialize the mutex
+    printk(KERN_INFO "I: /proc/%s created\n", FILE_NAME);
     return 0;
 }
 
 /**
  * process_root_delete: Delete the process nodes
- *
+ * 
  * @return void
  */
 static void process_root_delete(void)
 {
+
     struct rb_node *node;
     struct processNode *data;
-    printk(KERN_INFO "I: Deleting process nodes\n");
+        printk(KERN_INFO "I: Deleting process nodes\n");
 
-    // Traverse the red-black tree and delete the process nodes
     for (node = rb_first(&process_root); node; node = rb_next(node))
     {
         data = container_of(node, struct processNode, node);
-        rb_erase(&data->node, &process_root); // Erase the process node from the tree
+        rb_erase(&data->node, &process_root);
         if (data->processSet)
         {
             set_delete(data->processSet); // Delete the set associated with the process
         }
         kfree(data); // Free the memory allocated for the process node
     }
-    printk(KERN_INFO "I: Process nodes deleted\n"); // printk to the kernel log file
+    printk(KERN_INFO "I: Process nodes deleted\n");
 }
 
 /**
  * LKM_Exit: Module exit function
- *
+ * 
  * @return void
  */
 static void __exit LKM_Exit(void)
 {
-    process_root_delete();                               // Delete the process nodes
-    remove_proc_entry(FILE_NAME, NULL);                  // Remove the proc file
-    mutex_destroy(&procFileMutex);                       // Destroy the mutex
-    printk(KERN_INFO "I: LKM for partb_set unloaded\n"); // printk to the kernel log file
+    process_root_delete();
+    remove_proc_entry(FILE_NAME, NULL);
+    mutex_destroy(&procFileMutex);
+    printk(KERN_INFO "I: LKM for partb_set unloaded\n");
 }
 
 module_init(LKM_Init); // Register the module initialization function
