@@ -1,5 +1,5 @@
 /*
-Testcase - 6: Write invalid data
+Testcase - 6: Write invalid data // Expected size is 4 bytes
     1. Write 1 byte of invalid data
     2. Write 2 bytes of invalid data
     3. Write 8 bytes of invalid data
@@ -20,6 +20,11 @@ using namespace std;
 
 #define PROC_FILE "/proc/partb_21CS10016_21CS30037"
 
+/**
+ * Main function to test the module
+ * 
+ * @return 0 on success
+ */
 int main()
 {
     int fd = open(PROC_FILE, O_RDWR, 0666);

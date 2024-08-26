@@ -1,7 +1,7 @@
 /*
 Testcase - 4: Concurrent testing of the set with parent and child processes
     - Two processes are created using fork
-    - Both processes write random values to the set
+    - Both processes write random values to the set to their own file descriptors
     - Both processes read the values from the set and check if the values are consistent
     - The parent process waits for the child process to complete
     - The parent process exits with success if the child process exits with success
@@ -23,13 +23,28 @@ Testcase - 4: Concurrent testing of the set with parent and child processes
 #include <sys/types.h>
 using namespace std;
 
-#define PROC_FILE "/proc/partb_21CS10016_21CS30037"
+#define PROC_FILE "/proc/partb_21CS10016_21CS30037" // proc file to communicate with the module
 
+/**
+ * Function to generate a random number between 0 and 1
+ * @param p The probability of getting 1
+ * 
+ * @return 1 with probability p, 0 otherwise
+ */
 int prob(double p)
 {
     return rand() < p * RAND_MAX;
 }
 
+/**
+ * Function to check if the set is consistent with the values read from the file
+ * @param s The set to check
+ * @param fd The file descriptor to read the values from
+ * @param max_sz The maximum size of the set
+ * @param process_no The process number
+ * 
+ * @return true if the set is consistent, false otherwise
+ */
 bool check(set<int> &s, int fd, int max_sz, int process_no)
 {
     int set_read[max_sz];
@@ -57,6 +72,12 @@ bool check(set<int> &s, int fd, int max_sz, int process_no)
     return true;
 }
 
+/**
+ *  Function to run the test
+ * @param process_no The process number
+ *
+ * @return void
+ */
 void run_test(int process_no)
 {
     srand(getpid());
@@ -132,6 +153,11 @@ void run_test(int process_no)
     }
 }
 
+/**
+ * Main function to run the test
+ * 
+ * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure
+ */
 int main()
 {
     fork();

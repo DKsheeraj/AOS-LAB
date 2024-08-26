@@ -16,8 +16,13 @@ Testcase - 2: Opening the file twice
 #include <stdio.h>
 using namespace std;
 
-#define PROC_FILE "/proc/partb_21CS10016_21CS30037"
+#define PROC_FILE "/proc/partb_21CS10016_21CS30037" // proc file to communicate with the module
 
+/**
+ * Main function to test the module
+ * 
+ * @return 0 on success
+ */
 int main()
 {
     int fd = open(PROC_FILE, O_RDONLY);

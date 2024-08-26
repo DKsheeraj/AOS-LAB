@@ -1,7 +1,7 @@
 /*
 Testcase - 8: Try to write more than the size of the set
     1. Choose a random size for the set
-    2. Write more than the size of the set 10 times
+    2. Write more than the size of the set 10 times // These extra writes should fail
 
  * > 21CS30037 - Datta Ksheeraj
  * > 21CS10016 - Bratin Mondal
@@ -20,9 +20,14 @@ using namespace std;
 
 #define PROC_FILE "/proc/partb_21CS10016_21CS30037"
 
+/**
+ * Main function to test the module
+ * 
+ * @return 0 on success
+ */
 int main()
 {
-    srand(time(NULL));
+    srand(time(0));
     int sz = rand() % 100 + 1;
     int fd = open(PROC_FILE, O_RDWR, 0666);
     if(fd < 0)

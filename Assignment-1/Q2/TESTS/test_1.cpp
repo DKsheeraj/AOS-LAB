@@ -1,5 +1,5 @@
 /*
-Testcase - 1: Concurrent testing of the set
+Testcase - 1: Concurrent testing of the Module
     1. Randomly choose a size for the set from 1 to 100.
     2. Randomly choose values to insert into the set. (Both positive and negative values)
     3. With probability 0.8, check if the set is consistent after every insertion. (Dont check after every insertion simply to reduce overhead)
@@ -20,13 +20,28 @@ Testcase - 1: Concurrent testing of the set
 #include <stdio.h>
 using namespace std;
 
-#define PROC_FILE "/proc/partb_21CS10016_21CS30037"
+#define PROC_FILE "/proc/partb_21CS10016_21CS30037" // proc file to communicate with the module
 
+/**
+ * Function to generate a random number between 0 and 1
+ * @param p The probability of getting 1
+ * 
+ * @return 1 with probability p, 0 otherwise
+ */
 int prob(double p)
 {
     return rand() < p * RAND_MAX;
 }
 
+/**
+ * Function to check if the set is consistent with the values read from the file
+ * @param s The set to check
+ * @param fd The file descriptor to read the values from
+ * @param max_sz The maximum size of the set
+ * @param process_no The process number
+ * 
+ * @return true if the set is consistent, false otherwise
+ */
 bool check(set<int> &s, int fd, int max_sz,int process_no)
 {
     int set_read[max_sz];
@@ -54,6 +69,13 @@ bool check(set<int> &s, int fd, int max_sz,int process_no)
     return true;
 }
 
+/**
+ * Main function to test the module
+ * @param argc The number of command line arguments
+ * @param argv The command line arguments
+ * 
+ * @return 0 on success, 1 on failure
+ */
 int main(int argc, char *argv[])
 {
     srand(getpid());

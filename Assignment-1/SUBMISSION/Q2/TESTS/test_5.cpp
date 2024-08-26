@@ -1,8 +1,8 @@
 /*
 Testcase - 5: Initializing with invalid size
-    1. Write 1 byte of invalid size
-    2. Write 2 bytes of invalid size
-    3. Write 4 bytes of invalid size
+    1. Write 1 byte of invalid size (Not in the range of 1-100)
+    2. Write 2 bytes of invalid size (Expected is 1 byte)
+    3. Write 4 bytes of invalid size (Expected is 1 byte)
 
  * > 21CS30037 - Datta Ksheeraj
  * > 21CS10016 - Bratin Mondal
@@ -20,6 +20,11 @@ using namespace std;
 
 #define PROC_FILE "/proc/partb_21CS10016_21CS30037"
 
+/**
+ * Main function to test the module
+ * 
+ * @return 0 on success
+ */
 int main()
 {
     int fd = open(PROC_FILE, O_RDWR, 0666);

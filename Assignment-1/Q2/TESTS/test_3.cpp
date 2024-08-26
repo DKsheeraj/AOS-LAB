@@ -18,13 +18,27 @@ Testcase - 3: Resetting the set
 #include <time.h>
 using namespace std;
 
-#define PROC_FILE "/proc/partb_21CS10016_21CS30037"
+#define PROC_FILE "/proc/partb_21CS10016_21CS30037" // proc file to communicate with the module
 
+/**
+ * Function to generate a random number between 0 and 1
+ * @param p The probability of getting 1
+ * 
+ * @return 1 with probability p, 0 otherwise
+ */
 int prob(double p)
 {
     return rand() < p * RAND_MAX;
 }
 
+/**
+ * Function to check if the set is consistent with the values read from the file
+ * @param s The set to check
+ * @param fd The file descriptor to read the values from
+ * @param max_sz The maximum size of the set
+ * 
+ * @return true if the set is consistent, false otherwise
+ */
 bool check(set<int> &s, int fd, int max_sz)
 {
     int set_read[max_sz];
@@ -52,6 +66,11 @@ bool check(set<int> &s, int fd, int max_sz)
     return true;
 }
 
+/**
+ * Main function to test the module
+ * 
+ * @return 0 on success
+ */
 int main(int argc,char *argv[])
 {
     int iterations =0;

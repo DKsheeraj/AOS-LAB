@@ -188,6 +188,7 @@ static int set_insert(struct set *s, int val)
 static ssize_t set_read(struct set *s, char __user *buffer, size_t length)
 {
     size_t bytes_to_copy = min(length, (size_t)(s->size * sizeof(int))); // Get the number of bytes to copy, minimum of buffer length and set size in bytes
+    bytes_to_copy = (bytes_to_copy / sizeof(int)) * sizeof(int);         // Round down to the nearest multiple of 4 bytes
     if (copy_to_user(buffer, s->elements, bytes_to_copy))
     {
         return -EACCES;
