@@ -69,4 +69,7 @@ int main()
     {
         wait(nullptr);
     }
+
+    close(fd);
+    return 0;
 }

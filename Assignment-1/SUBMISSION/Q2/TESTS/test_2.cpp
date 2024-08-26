@@ -42,6 +42,7 @@ int main()
     else
     {
         printf("TEST FAILED\n");
+        close(fd);
         exit(EXIT_FAILURE);
     }
 }

@@ -153,6 +153,7 @@ int main(int argc, char *argv[])
     else
     {
         printf("Process Number: %d, Test passed %d\n", process_no, ++count);
+        close(fd);
     }
     printf("Process Number: %d, Test passed\n", process_no);
     exit(EXIT_SUCCESS);

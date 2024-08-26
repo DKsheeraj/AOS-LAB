@@ -73,5 +73,8 @@ int main()
             printf("TEST CASE %d FAILED\n", i + 11);
         }
     }
+
+    close(fd);
+    return 0;
     
 }

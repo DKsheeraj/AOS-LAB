@@ -39,4 +39,7 @@ int main()
     {
         printf("TEST CASE 1 FAILED\n");
     }
+
+    close(fd);
+    return 0;
 }
