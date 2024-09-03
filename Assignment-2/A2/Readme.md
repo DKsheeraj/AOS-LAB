@@ -32,8 +32,8 @@ Currently added at line number 365 for SYSCALL number 441
 ```bash
 make menuconfig
 make -j4
-sudo make modules_install -j12
-sudo make install -j12
+sudo make modules_install -j4
+sudo make install -j4
 sudo update-grub
 ```
 
