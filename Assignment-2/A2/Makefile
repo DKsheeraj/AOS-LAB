@@ -1,3 +1,15 @@
+# /*
+#  * CS60038: Advances in Operating Systems Design
+#  * Assignment 2
+#  * Members:
+#  * > 21CS30037 - Datta Ksheeraj
+#  * > 21CS10016 - Bratin Mondal
+#  *
+#  * Department of Computer Science and Engineering,
+#  * Indian Institute of Technology Kharagpur
+#  */
+
+
 # Define variables
 CC = gcc
 CFLAGS = -Ilibgettaskinfo
