@@ -13,6 +13,7 @@
 #include <linux/syscalls.h>
 #include <linux/sched.h>
 #include <linux/uaccess.h>
+#include <linux/rcupdate.h>
 
 /**
  * gettaskinfo - A system call to retrieve information about a task.
@@ -42,6 +43,7 @@ SYSCALL_DEFINE2(gettaskinfo, pid_t, pid, char __user *, buffer)
 
     // Find the task structure by PID.
     task = pid_task(find_vpid(pid), PIDTYPE_PID);
+    task = rcu_dereference(task);
     if (!task)
     {
         printk(KERN_ERR "gettaskinfo: No task found with PID = %d\n", pid);
