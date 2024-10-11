@@ -87,3 +87,6 @@ Thumbs.db
 *.order
 *.tmp_versions
 *.tmp
+
+# Ignore directory with buildroot
+Assignment-3/buildroot-2024.02.6/
