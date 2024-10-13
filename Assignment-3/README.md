@@ -1,43 +1,62 @@
-# Custom Embedded Linux for Raspberry Pi 
-## Download the latest stable Buildroot tarball from the official Buildroot website.
+# AOS Assignment-2
+## Custom Linux distribution for embedded systems
+>	Bratin Mondal (21CS10016)  
+    Datta Ksheeraj (21CS30037)
+
+## Steps to build a Custom embedded Linux distribution for Raspberry Pi 3 using Buildroot
+
+1. Download the latest stable Buildroot tarball from the official Buildroot website. For our project, we have used Buildroot 2024.02.6.
+
+2. Extract the tarball and navigate to the extracted directory.
 ```bash
-tar -xvf buildroot-<version>.tar.gz
-cd buildroot-<version>
+tar -xvf buildroot-2024.02.6.tar.gz
+cd buildroot-2024.02.6
 ```
-##  Configure Buildroot for Raspberry Pi 3
+
+3. Configure Buildroot for Raspberry Pi 3
 ```bash
-make  raspberrypi4_64_defconfig
+make raspberrypi3_defconfig
 ```
-## Configure Buildroot
+
+4. Configure Buildroot
 ```bash
 make menuconfig
 ```
-1. Display names in system banner
-   ```bash
-   System configuration --->
-     System banner
-   ```
-2. Enabling nano text editor
-   ```bash
-   Target Packages --->
-     Text editors and viewers --->
-       nano
-3. Set root password
-   ```bash
-   System configuration --->
-     Root password
-   ```
-4. Enabling SSH server capabilities
-   ```bash
-   Target Packages --->
-     Networking Applications --->
-       openssh
-   ```
-5. Enabling network utilities by selecting Net-tools
-   ```bash
-   Target Packages --->
-     Networking Applications --->
-       net-tools
-   ```
-6. Save and Exit
-   
+### a) Display names in system banner
+```
+System configuration --->
+  System banner
+```
+In system banner, enter the text you want to display on the system banner.
+
+### b) Enabling `nano` text editor
+```
+Target Packages --->
+  Text editors and viewers --->
+   [*] nano
+```
+Select `nano` from the list of text editors and viewers.
+
+### c) Set root password
+```
+System configuration --->
+  Root password
+```
+Set the root password for the system.
+
+### d) Enabling SSH server capabilities
+```
+Target Packages --->
+  Networking Applications --->
+    [*] openssh --->
+    [*] server
+```
+
+### e) Enabling network utilities by selecting Net-tools
+```
+Target Packages --->
+  Networking Applications --->
+    [*] net-tools
+```
+
+5. Save the configuration and exit.
