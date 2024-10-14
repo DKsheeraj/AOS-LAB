@@ -1,4 +1,4 @@
-# AOS Assignment-2
+# AOS Assignment-3
 ## Custom Linux distribution for embedded systems
 >	Bratin Mondal (21CS10016)  
     Datta Ksheeraj (21CS30037)
