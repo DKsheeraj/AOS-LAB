@@ -42,7 +42,7 @@ Select `nano` from the list of text editors and viewers.
 System configuration --->
   Root password
 ```
-Set the root password for the system.
+Set the root password for the system. We have set it to "AOS2024".
 
 ### d) Enabling SSH server capabilities
 ```
@@ -60,3 +60,8 @@ Target Packages --->
 ```
 
 5. Save the configuration and exit.
+
+6. To compile the Buildroot, run the following command:
+```bash
+make
+```
