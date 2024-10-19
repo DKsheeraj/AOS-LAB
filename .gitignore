@@ -89,4 +89,4 @@ Thumbs.db
 *.tmp
 
 # Ignore directory with buildroot
-Assignment-3/buildroot-2024.02.6/
+Assignment-3/buildroot-2024*

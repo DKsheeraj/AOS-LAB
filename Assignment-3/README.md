@@ -42,14 +42,14 @@ Select `nano` from the list of text editors and viewers.
 System configuration --->
   Root password
 ```
-Set the root password for the system. We have set it to "AOS2024".
+Set the root password for the system. We have set it to "root"
 
 ### d) Enabling SSH server capabilities
 ```
 Target Packages --->
   Networking Applications --->
     [*] openssh --->
-    [*] server
+      [*] server
 ```
 
 ### e) Enabling network utilities by selecting Net-tools
