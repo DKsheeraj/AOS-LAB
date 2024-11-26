@@ -23,7 +23,7 @@ Blob Storage is used for large, often unstructured binary data like images, vide
 
 \subsubsection*{Hot Blob Storage}\label{sec:hot_blob_storage}
 
-Hot blobs are stored in Haystack\cite{haystack}, a distributed system designed to handle large volumes of data efficiently at scale. Haystack employs a flat, key-value model that minimizes metadata storage by storing blob data contiguously, reducing disk I/O and enhancing retrieval performance. With a replication factor of 3, each blob is replicated across three nodes to ensure fault tolerance and high availability. The core design principle is to eliminate unnecessary metadata, as it is not critical for blob storage, thus reducing disk seeks.
+Hot blobs were stored in Haystack\cite{haystack}, a distributed system designed to handle large volumes of data efficiently at scale. Haystack employs a flat, key-value model that minimizes metadata storage by storing blob data contiguously, reducing disk I/O and enhancing retrieval performance. With a replication factor of 3, each blob is replicated across three nodes to ensure fault tolerance and high availability. The core design principle is to eliminate unnecessary metadata, as it is not critical for blob storage, thus reducing disk seeks.
 
 \subsubsection*{Issues with Haystack}\label{sec:haystack_issues}
 One of the major limitations of Haystack was its high IOPS (Input/Output Operations Per Second) requirements. Originally, Meta's Engineering team designed the system with a replication factor of 3.6, which included 3 for replication and an additional 1.2x for RAID6 redundancy. However, in practice, the devices struggled to meet the IOPS demands, necessitating the addition of more devices to keep up with the load. This issue arose due to advances in disk density, while IOPS capabilities remained relatively unchanged. As a result, the effective replication factor grew to 5.3x, with a significant portion of the storage capacity being underutilized.
@@ -42,7 +42,7 @@ Meta's Data Warehouse storage relied on the Apache Hadoop Distributed File Syste
 
 
 \subsubsection*{Issues with HDFS}\label{sec:hdfs_issues}
-HDFS' capacity was constrained by the NameNode's metadata storage, which could not scale to meet Meta's increasing data demands. To address this, Meta's Engineering team partitioned data across multiple HDFS clusters, each with its own NameNode. This solution introduced operational complexity, resembling a 2D-bin packing problem, with one dimension representing data size and the other throughput requirements. The partitioning strategy proved inefficient, requiring manual load balancing across clusters and making system management and scalability challenging. In short, scaling HDFS became an unsustainable solution for Meta's expanding data needs.
+ Capacity of HDFS was constrained by the NameNode's metadata storage, which could not scale to meet Meta's increasing data demands. To address this, Meta's Engineering team partitioned data across multiple HDFS clusters, each with its own NameNode. This solution introduced operational complexity, resembling a 2D-bin packing problem, with one dimension representing data size and the other throughput requirements. The partitioning strategy proved inefficient, requiring manual load balancing across clusters and making system management and scalability challenging. In short, scaling HDFS became an unsustainable solution for Meta's expanding data needs.
 
 
 \subsection{Design Goals for Tectonic}\label{sec:design_goals}

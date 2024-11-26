@@ -11,12 +11,12 @@ A Tectonic cluster is composed of Chunk Stores, Metadata Stores, and Background 
 \end{figure}
 
 \subsubsection{Chunk Store}\label{sec:chunk_store}
-In Tectonic, a file is composed of multiple blocks, each containing several chunks, which are the fundamental data storage unit. The \textbf{Chunk Store} is a flat, distributed object store that manages these chunks and is designed to scale linearly with the number of storage nodes, supporting exabytes of data. This abstraction is managed by the Client Library and the Metadata Store, which handle higher-level abstractions like blocks and files.
+In Tectonic, a file is composed of multiple blocks, each containing several chunks, which are the fundamental data storage unit. The Chunk Store is a flat, distributed object store that manages these chunks and is designed to scale linearly with the number of storage nodes, supporting exabytes of data. This abstraction is managed by the Client Library and the Metadata Store, which handle higher-level abstractions like blocks and files.
 
-Chunks are stored as files on storage nodes, each running a local instance of XFS. These nodes are equipped with 36 hard drives for chunk storage and a 1 TB SSD for XFS metadata and caching frequently accessed chunks. The SSD cache is managed using a flash endurance-aware caching library to optimize performance and prolong the lifespan of the drives. Tectonic ensures block durability through Reed-Solomon (RS) encoding or replication. Chunks within blocks are distributed across fault domains for fault tolerance, and background services repair damaged or lost chunks to maintain data durability.
+Chunks are stored as files on storage nodes, each running a local instance of XFS. These nodes are equipped with 36 hard drives for chunk storage and a 1 TB SSD for XFS metadata and caching frequently accessed chunks. The SSD cache is managed using a flash endurance-aware caching library to optimize performance. Tectonic ensures block durability through Reed-Solomon (RS) encoding or replication. Chunks within blocks are distributed across fault domains for fault tolerance, and background services repair damaged or lost chunks to maintain data durability.
 
 \subsubsection{Metadata Store}\label{sec:metadata_store}
-Tectonic addresses the challenge of managing large volumes of metadata by organizing it hierarchically into multiple layers. The \textbf{Metadata Store} is a distributed key-value store, divided into three distinct layers:
+Tectonic addresses the challenge of managing large volumes of metadata by organizing it hierarchically into multiple layers. The Metadata Store is a distributed key-value store, divided into three distinct layers:
 
 \begin{itemize}\label{list:metadata_layers}
     \item \textbf{Name Layer}: Maps directories to the sub-directories and files they contain.
